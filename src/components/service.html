@@ -32,7 +32,12 @@
                 {/if}
             </div>
             <p on:click="toogle()"></p>
-            <pre style="margin: 0" on:click="toogle()">{config.Command} {config.Args.join(' ')}</pre>
+            <pre style="margin: 0" on:click="toogle()">{config.Command}
+            <!-- 之前没判断的时候Windows下执行命令参数为空无法显示UI -->
+            {#if config.Args !== null}
+                {config.Args.join(' ')}
+            {/if}
+            </pre>
             {#if detailed}
             <div class="mainblock" on:click="toogle()">
                 <div class="run">
