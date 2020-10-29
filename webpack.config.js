@@ -4,6 +4,7 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = env => {
     return {
+        // devtool: env.mode ? 'source-maps' : 'eval',
         entry: './src/index.js',
         output: {
             filename: 'main.js',
@@ -32,13 +33,13 @@ module.exports = env => {
                             options: {minimize: true}
                         }
                     ]
-                }
+                },
             ]
         },
         devServer: {
             contentBase: path.join(__dirname, 'dist'),
             compress: true,
-            port: 9000
+            port: 9700
         },
         plugins: [
             new Dotenv({

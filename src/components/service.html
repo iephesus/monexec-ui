@@ -78,6 +78,8 @@
     </div>
 </div>
 <script>
+    import dialog from 'art-dialog'
+
     export default {
         data() {
             return {
@@ -103,36 +105,62 @@
                 })
             },
             start() {
-                const {running, config, base} = this.get();
-                if (running) return;
-                this.set({running: null});
-                return fetch(`${base}/supervisor/` + encodeURIComponent(config.Name), {
-                    method: 'post',
-                }).then((r) => {
-                    if (r.status !== 200) {
-                        console.warn(r.status, r.statusText)
-                    } else {
-                        return this.fetchState();
-                    }
-                }).catch((err) => {
-                    console.error(config.Name, err);
-                })
+                let m = this
+                let d = dialog({
+                    title: '提示',
+                    content: '确定启动服务吗?',
+                    okValue: '确定',
+                    ok: function () {
+                        this.title('正在启动服务...');
+
+                        const {running, config, base} = m.get();
+                        if (running) return;
+                        m.set({running: null});
+                        return fetch(`${base}/supervisor/` + encodeURIComponent(config.Name), {
+                            method: 'post',
+                        }).then((r) => {
+                            if (r.status !== 200) {
+                                console.warn(r.status, r.statusText)
+                            } else {
+                                return m.fetchState();
+                            }
+                        }).catch((err) => {
+                            console.error(config.Name, err);
+                        })
+                    },
+                    cancelValue: '取消',
+                    cancel: function () {}
+                });
+                d.show();
             },
             stop() {
-                const {running, config, base} = this.get();
-                if (!running) return;
-                this.set({running: null});
-                return fetch(`${base}/instance/` + encodeURIComponent(config.Name), {
-                    method: 'post',
-                }).then((r) => {
-                    if (r.status !== 204) {
-                        console.warn(r.status, r.statusText)
-                    } else {
-                        return this.fetchState();
-                    }
-                }).catch((err) => {
-                    console.error(config.Name, err);
-                })
+                let m = this
+                let d = dialog({
+                    title: '提示',
+                    content: '确定停止服务吗?',
+                    okValue: '确定',
+                    ok: function () {
+                        this.title('正在停止服务...');
+
+                        const {running, config, base} = m.get();
+                        if (!running) return;
+                        m.set({running: null});
+                        return fetch(`${base}/instance/` + encodeURIComponent(config.Name), {
+                            method: 'post',
+                        }).then((r) => {
+                            if (r.status !== 204) {
+                                console.warn(r.status, r.statusText)
+                            } else {
+                                return m.fetchState();
+                            }
+                        }).catch((err) => {
+                            console.error(config.Name, err);
+                        })
+                    },
+                    cancelValue: '取消',
+                    cancel: function () {}
+                });
+                d.show();
             },
             toogle() {
                 this.fire('clicked');
